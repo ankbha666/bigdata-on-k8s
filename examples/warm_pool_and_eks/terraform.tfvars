@@ -1,5 +1,5 @@
 region            = "eu-central-1"
 cluster_name      = "warm-pool-eks-cluster"
-cluster_version   = "1.28"
+cluster_version   = "1.29"
 tags              = {}
 pod_identity_type = "IRSA"
