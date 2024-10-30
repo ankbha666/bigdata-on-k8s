@@ -19,4 +19,4 @@ variable "warm_pool_instance_type" {
   type        = string
   description = "Instance type for warm pool nodes"
   default     = "t3a.large"
-}
+ }

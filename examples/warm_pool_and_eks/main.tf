@@ -57,12 +57,12 @@ module "warm_node_pool" {
   cluster_name               = module.eks.cluster_name
   cluster_version            = module.eks.cluster_version
   subnet_ids                 = module.vpc.public_subnets
+  instance_type              = var.warm_pool_instance_type
   vpc_security_group_ids     = [module.eks.cluster_primary_security_group_id, module.eks.cluster_security_group_id]
   token                      = data.aws_eks_cluster_auth.cluster.token
   cluster_endpoint           = module.eks.cluster_endpoint
   certificate_authority_data = module.eks.cluster_certificate_authority_data
   tags                       = var.tags
-  instance_type             = var.warm_pool_instance_type
 }
 
 module "autoscaler" {
