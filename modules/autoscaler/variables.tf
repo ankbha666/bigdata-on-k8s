@@ -14,5 +14,5 @@ variable "pod_identity_type" {
 }
 
 variable "cluster_autoscaler_image_tag" {
-  default = "v1.29.0"
+  default = "v1.31.0"
 }

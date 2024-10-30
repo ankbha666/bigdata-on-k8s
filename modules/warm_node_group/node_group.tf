@@ -49,10 +49,12 @@ module "self_managed_node_group" {
       device_name = "/dev/xvda"
       ebs = {
         volume_size           = 50
-        volume_type           = "gp2"
+        volume_type          = "gp2"
         delete_on_termination = true
-        encrypted             = false // For hibernation, the root device volume must be encrypted.
+        encrypted             = false
       }
     }
   }
+
+  tags = var.tags
 }
