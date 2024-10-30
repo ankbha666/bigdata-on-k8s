@@ -1,6 +1,6 @@
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.21.0"
+  version = "~> 19.0"
 
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
@@ -9,27 +9,27 @@ module "eks" {
   tags            = var.tags
 
   cluster_addons = merge({
-    coredns            = { 
-      addon_version = "v1.11.1-eksbuild.4"
+    coredns = {
+      addon_version               = "v1.11.1-eksbuild.9"
       resolve_conflicts_on_create = "OVERWRITE"
       resolve_conflicts_on_update = "PRESERVE"
     }
-    kube-proxy         = { 
-      addon_version = "v1.29.0-eksbuild.2"
+    kube-proxy = {
+      addon_version               = "v1.30.0-eksbuild.3"
       resolve_conflicts_on_create = "OVERWRITE"
       resolve_conflicts_on_update = "PRESERVE"
     }
-    vpc-cni            = { 
-      addon_version = "v1.16.0-eksbuild.1"
+    vpc-cni = {
+      addon_version               = "v1.18.5-eksbuild.1"
       resolve_conflicts_on_create = "OVERWRITE"
       resolve_conflicts_on_update = "PRESERVE"
     }
-    aws-ebs-csi-driver = { 
-      addon_version = "v1.26.0-eksbuild.1"
-      service_account_role_arn = var.pod_identity_type == "IRSA" ? module.ebs_csi_irsa_role.iam_role_arn : null
+    aws-ebs-csi-driver = {
+      addon_version               = "v1.35.0-eksbuild.1"
+      service_account_role_arn    = var.pod_identity_type == "IRSA" ? module.ebs_csi_irsa_role.iam_role_arn : null
       resolve_conflicts_on_create = "OVERWRITE"
       resolve_conflicts_on_update = "PRESERVE"
-      }
+    }
     },
     var.pod_identity_type == "EKS_POD_IDENTITY" ? {
       eks-pod-identity-agent = { addon_version = "v1.0.0-eksbuild.1" }
@@ -56,13 +56,13 @@ module "warm_node_pool" {
   region                     = var.region
   cluster_name               = module.eks.cluster_name
   cluster_version            = module.eks.cluster_version
-  instance_type              = "t3a.large"
   subnet_ids                 = module.vpc.public_subnets
   vpc_security_group_ids     = [module.eks.cluster_primary_security_group_id, module.eks.cluster_security_group_id]
   token                      = data.aws_eks_cluster_auth.cluster.token
   cluster_endpoint           = module.eks.cluster_endpoint
   certificate_authority_data = module.eks.cluster_certificate_authority_data
   tags                       = var.tags
+  instance_type             = var.warm_pool_instance_type
 }
 
 module "autoscaler" {
@@ -113,10 +113,10 @@ resource "aws_eks_pod_identity_association" "ebs_csi" {
 }
 
 module "ebs_csi_irsa_role" {
-  source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version   = "~> 5.20"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.20"
 
-  role_name = "${var.cluster_name}-ebs-csi-controller"
+  role_name             = "${var.cluster_name}-ebs-csi-controller"
   attach_ebs_csi_policy = true
 
   oidc_providers = {
